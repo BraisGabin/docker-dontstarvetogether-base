@@ -9,11 +9,11 @@ ARG DST_BRANCH_PASSWORD
 ENV DST_BRANCH_PASSWORD ${DST_BRANCH_PASSWORD}
 
 # Install Don't Starve Together Server.
-RUN set -x \
-	&& mkdir -p $DST_HOME \
-	&& chown $STEAM_USER:$STEAM_USER $DST_HOME \
-	&& sync \
-	&& gosu $STEAM_USER steamcmd \
+RUN set -ex; \
+	mkdir -p $DST_HOME; \
+	chown $STEAM_USER:$STEAM_USER $DST_HOME; \
+	sync; \
+	gosu $STEAM_USER steamcmd \
 		+@ShutdownOnFailedCommand 1 \
 		+login anonymous \
 		+force_install_dir $DST_HOME \
@@ -33,13 +33,13 @@ ENV DST_HOME "/opt/dst"
 RUN groupadd -r $DST_USER && useradd -rm -d $DST_HOME -g $DST_USER $DST_USER
 
 # Install dependencies.
-RUN set -x \
-	&& dpkg --add-architecture i386 \
-	&& apt-get update \
-	&& apt-get install -y --no-install-recommends \
+RUN set -ex; \
+	dpkg --add-architecture i386; \
+	apt-get update; \
+	apt-get install -y --no-install-recommends \
 		lib32stdc++6 \
-		libcurl4-gnutls-dev:i386 \
-	&& apt-get clean \
-	&& rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
+		libcurl4-gnutls-dev:i386; \
+	apt-get clean; \
+	rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
 COPY --from=STEAM --chown=dst:dst $DST_HOME $DST_HOME
