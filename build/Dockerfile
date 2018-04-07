@@ -70,3 +70,5 @@ COPY --from=STEAM --chown=dst:dst $DST_HOME $DST_HOME
 
 # Copy common scripts.
 COPY /script/* /usr/local/bin/
+
+CMD dontstarve_dedicated_server_nullrenderer
