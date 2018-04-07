@@ -1,0 +1,9 @@
+#!/usr/bin/env bash
+
+if [[ "$(whoami)" != "$DST_USER" ]]; then
+	exec gosu "$DST_USER" "$0" "$@"
+fi
+
+cd "$DST_HOME/bin"
+
+exec ./dontstarve_dedicated_server_nullrenderer "$@"

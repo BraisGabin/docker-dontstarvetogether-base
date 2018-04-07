@@ -67,3 +67,6 @@ RUN set -ex; \
 	apt-get purge -y --auto-remove $fetchGosuDeps
 
 COPY --from=STEAM --chown=dst:dst $DST_HOME $DST_HOME
+
+# Copy common scripts.
+COPY /script/* /usr/local/bin/
