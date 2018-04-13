@@ -23,34 +23,7 @@ RUN set -ex; \
 			validate \
 		+quit
 
-FROM alpine:3.7 as GOSU
-
-ENV GOSU_VERSION 1.10
-RUN set -ex; \
-	\
-	apk add --no-cache --virtual .gosu-deps \
-		dpkg \
-		gnupg \
-		openssl \
-	; \
-	\
-	dpkgArch="$(dpkg --print-architecture | awk -F- '{ print $NF }')"; \
-	wget -O /usr/local/bin/gosu "https://github.com/tianon/gosu/releases/download/$GOSU_VERSION/gosu-$dpkgArch"; \
-	wget -O /usr/local/bin/gosu.asc "https://github.com/tianon/gosu/releases/download/$GOSU_VERSION/gosu-$dpkgArch.asc"; \
-	\
-# verify the signature
-	export GNUPGHOME="$(mktemp -d)"; \
-	gpg --keyserver ha.pool.sks-keyservers.net --recv-keys B42F6819007F00F88E364FD4036A9C25BF357DD4; \
-	gpg --batch --verify /usr/local/bin/gosu.asc /usr/local/bin/gosu; \
-	rm -rf "$GNUPGHOME" /usr/local/bin/gosu.asc; \
-	\
-	chmod +x /usr/local/bin/gosu; \
-# verify that the binary works
-	gosu nobody true; \
-	\
-	apk del .gosu-deps
-
-FROM debian:9-slim
+FROM dstacademy/gosu:0.1
 MAINTAINER DST Academy <support@dst.academy>
 
 ENV DST_USER "dst"
@@ -70,7 +43,6 @@ RUN set -ex; \
 	rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
 COPY --from=STEAM --chown=dst:dst $DST_HOME $DST_HOME
-COPY --from=GOSU /usr/local/bin/gosu /usr/local/bin/gosu
 
 # Copy common scripts.
 COPY /script/* /usr/local/bin/
